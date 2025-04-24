@@ -18,11 +18,11 @@ function App() {
       <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gradient-to-r from-yellow-100 to-gray-200"} p-6`}>
         <Header onThemeToggle={handleModeToggle} currentTheme={theme} />
         
+        <div className="my-12"></div>
         {/* Task Management Content */}
         <TaskManagementApp />
 
-        {/* Footer with added gap */}
-        <div className="my-12"></div>
+        <div className="my-10"></div>
         <Footer />
       </div>
     </Router>

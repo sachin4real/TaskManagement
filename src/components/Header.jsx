@@ -26,7 +26,7 @@ const Header = ({ onThemeToggle, currentTheme }) => {
           onClick={onThemeToggle}
           className="p-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition duration-300"
         >
-          {currentTheme === "light" ? "🌙" : "☀️"}
+          {currentTheme === "light" ? "🌑" : "☀️"}
         </button>
       </div>
     </header>
