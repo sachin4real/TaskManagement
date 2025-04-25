@@ -5,6 +5,9 @@ const TaskManagementApp = () => {
   const [taskInput, setTaskInput] = useState("");
   const [filter, setFilter] = useState("all");
 
+  // Get today's date
+  const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem("tasks"));
     if (storedTasks) {
@@ -13,41 +16,44 @@ const TaskManagementApp = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    if (tasks.length > 0) {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
   }, [tasks]);
 
   const addTask = () => {
     if (taskInput.trim() === "") return;
-    setTasks([
-      ...tasks,
-      {
-        id: Date.now(),
-        text: taskInput,
-        completed: false,
-        dueDate: new Date().toISOString().split("T")[0], // default to today's date
-      },
-    ]);
+    const newTask = {
+      id: Date.now(),
+      text: taskInput,
+      completed: false,
+      dueDate: todayDate, 
+    };
+    setTasks([...tasks, newTask]);
     setTaskInput("");
   };
 
   const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    // Filter out the task to be deleted
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+
+    // Update the tasks in the state
+    setTasks(updatedTasks);
+
+    // Also update localStorage with the new tasks list
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
   const toggleComplete = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+    setTasks(tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
   };
 
   const editTask = (id, newText) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, text: newText } : task
-      )
-    );
+    setTasks(tasks.map((task) =>
+      task.id === id ? { ...task, text: newText } : task
+    ));
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -63,15 +69,19 @@ const TaskManagementApp = () => {
   };
 
   const taskColorByDueDate = (dueDate) => {
-    const today = new Date().toISOString().split("T")[0];
-    if (dueDate < today) return "bg-red-500"; // overdue
-    if (dueDate === today) return "bg-green-500"; // due today
+    if (dueDate < todayDate) return "bg-red-500"; // overdue
+    if (dueDate === todayDate) return "bg-green-500"; // due today
     return "bg-yellow-400"; // upcoming
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-yellow-100 to-gray-200 p-4">
       <div className="w-full max-w-2xl bg-white p-6 rounded-xl shadow-lg">
+        {/* Display Today's Date */}
+        <div className="text-center text-xl font-semibold mb-6">
+          Today's Date: {todayDate}
+        </div>
+
         {/* Add Task */}
         <div className="flex items-center space-x-4 mb-8">
           <input
